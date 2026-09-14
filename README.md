@@ -21,6 +21,16 @@ docker compose exec dev bash
 
 Edits under `/workspace` inside the container and edits in the host repository are the same files. Stop the development container with `docker compose stop dev`; start it again with `docker compose start dev`.
 
+On an NVIDIA Linux server, use the checked GPU launcher. It verifies the host GPU, container GPU access, source mount, and a MuJoCo EGL render before reporting success:
+
+```bash
+./scripts/start_gpu_dev.sh
+# Or start and enter the shell:
+./scripts/start_gpu_dev.sh --shell
+```
+
+The GPU overlay passes all NVIDIA devices, enables the `graphics` driver capability, forwards `$DISPLAY`, and mounts `/tmp/.X11-unix`. EGL works without a desktop session; an available X server additionally supports interactive viewer windows. The overlay stays separate so CPU-only Docker and GitHub Actions continue to use the portable base `compose.yaml`.
+
 For interactive development, open the repository in VS Code and select **Dev Containers: Reopen in Container**. The same image can also provide a mounted shell:
 
 ```bash

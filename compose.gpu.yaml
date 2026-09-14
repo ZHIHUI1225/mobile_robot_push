@@ -1,0 +1,11 @@
+services:
+  dev:
+    gpus: all
+    environment:
+      MUJOCO_GL: egl
+      DISPLAY: ${DISPLAY:-}
+      QT_X11_NO_MITSHM: "1"
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility,graphics
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
