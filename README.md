@@ -80,6 +80,24 @@ xml, manifest = build_scene(SceneSpec(
 
 Assets can be matched with either map. The builder accepts multiple named pushers and parcels. The two Gymnasium presets retain one pusher and one parcel so their observation and action contracts stay simple.
 
+## Scene viewer
+
+Use one command to inspect different map and asset combinations:
+
+```bash
+# Interactive X11 viewer
+python examples/view_scene.py --map single_room
+python examples/view_scene.py --map two_room_corridor --pushers 2 --parcels 2
+python examples/view_scene.py --map two_room_corridor --pushers 2 --cable
+
+# GPU EGL rendering without an X11 desktop
+python examples/view_scene.py --map single_room --mode egl --output room.png
+python examples/view_scene.py --map two_room_corridor --pushers 2 --cable \
+  --mode egl --output cable_corridor.png
+```
+
+`--mode check` compiles a composition without opening or rendering it. Cable mode requires exactly two pushers because its endpoints attach to both robots.
+
 ## Cable attachment
 
 `Cable` is an articulated asset connected between two `EpuckPusher` attachment sites. Its endpoint distance must match its configured length. It is available for custom scenes and is not a third registered task in v0.1.
