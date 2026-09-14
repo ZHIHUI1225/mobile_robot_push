@@ -81,7 +81,7 @@ def main() -> None:
     if args.mode == "egl":
         from PIL import Image
 
-        renderer = mujoco.Renderer(model, height=720, width=960)
+        renderer = mujoco.Renderer(model, height=480, width=640)
         camera = mujoco.MjvCamera()
         camera.type = mujoco.mjtCamera.mjCAMERA_FREE
         camera.lookat[:] = (*manifest.camera[:2], 0.0)
