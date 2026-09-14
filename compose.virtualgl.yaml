@@ -1,6 +1,0 @@
-services:
-  dev:
-    volumes:
-      - /opt/VirtualGL:/opt/VirtualGL:ro
-      - /usr/lib/libvglfaker.so:/usr/lib/libvglfaker.so:ro
-      - /usr/lib/libdlfaker.so:/usr/lib/libdlfaker.so:ro

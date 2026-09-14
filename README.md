@@ -98,12 +98,14 @@ python examples/view_scene.py --map two_room_corridor --pushers 2 --cable \
 
 `--mode check` compiles a composition without opening or rendering it. Cable mode requires exactly two pushers because its endpoints attach to both robots.
 
-On a remote NVIDIA workstation with a virtual X desktop, start the container with `./scripts/start_gpu_dev.sh`, then open the GPU-accelerated interactive viewer through VirtualGL:
+On a remote NVIDIA workstation with a virtual X desktop, start the container with `./scripts/start_gpu_dev.sh`, then open the interactive viewer:
 
 ```bash
 ./scripts/open_viewer.sh --map single_room
 ./scripts/open_viewer.sh --map two_room_corridor --pushers 2 --cable
 ```
+
+The remote X11 viewer uses its Mesa GLX provider for window presentation. Training and `--mode egl` rendering retain direct access to the NVIDIA GPU. This split avoids GLX drawable failures between virtual desktops and the NVIDIA container runtime.
 
 ## Cable attachment
 

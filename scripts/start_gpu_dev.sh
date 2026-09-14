@@ -16,12 +16,6 @@ if [[ -z "${DISPLAY:-}" ]]; then
   fi
 fi
 
-virtualgl=false
-if [[ -x /opt/VirtualGL/bin/vglrun && -f /usr/lib/libvglfaker.so && -f /usr/lib/libdlfaker.so ]]; then
-  compose+=(-f "$repo_dir/compose.virtualgl.yaml")
-  virtualgl=true
-fi
-
 if [[ -n "${DISPLAY:-}" ]] && command -v xhost >/dev/null && xhost +local:docker >/dev/null 2>&1; then
   echo "X11 enabled: DISPLAY=$DISPLAY, socket=/tmp/.X11-unix"
 else
@@ -46,7 +40,7 @@ echo "Development container is ready: $container_id"
 echo "Host source: $repo_dir"
 echo "Container source: /workspace"
 echo "Rendering: NVIDIA GPU + EGL${DISPLAY:+ + X11 DISPLAY=$DISPLAY}"
-if [[ "$virtualgl" == true && -n "${DISPLAY:-}" ]]; then
+if [[ -n "${DISPLAY:-}" ]]; then
   echo "Interactive viewer: ./scripts/open_viewer.sh --map single_room"
 fi
 echo "Enter with: ${compose[*]} exec dev bash"

@@ -7,9 +7,8 @@ if [[ -z "${DISPLAY:-}" ]]; then
   echo "DISPLAY is empty; restart with ./scripts/start_gpu_dev.sh" >&2
   exit 1
 fi
-if [[ ! -x /opt/VirtualGL/bin/vglrun ]]; then
-  echo "VirtualGL is unavailable; use --mode egl or start with the VirtualGL overlay" >&2
-  exit 1
-fi
-
-exec /opt/VirtualGL/bin/vglrun -d egl python examples/view_scene.py "$@"
+# The remote X desktop is Mesa-backed. Keep GLFW on that GLX provider while
+# NVIDIA remains available to training and headless MuJoCo EGL rendering.
+export LIBGL_ALWAYS_SOFTWARE=1
+export __GLX_VENDOR_LIBRARY_NAME=mesa
+exec python examples/view_scene.py "$@"
