@@ -1,4 +1,14 @@
 services:
+  dev:
+    build: .
+    environment:
+      MUJOCO_GL: egl
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    init: true
+    command: sleep infinity
+
   test:
     build: .
     environment:

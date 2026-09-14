@@ -12,6 +12,15 @@ docker compose run --rm test
 docker compose run --rm room
 ```
 
+Start a persistent development container with the repository mounted at `/workspace`:
+
+```bash
+docker compose up -d dev
+docker compose exec dev bash
+```
+
+Edits under `/workspace` inside the container and edits in the host repository are the same files. Stop the development container with `docker compose stop dev`; start it again with `docker compose start dev`.
+
 For interactive development, open the repository in VS Code and select **Dev Containers: Reopen in Container**. The same image can also provide a mounted shell:
 
 ```bash
