@@ -1,15 +1,12 @@
 {
-  "name": "epuck-mujoco",
-  "build": {
-    "dockerfile": "../Dockerfile",
-    "context": ".."
-  },
-  "containerEnv": {
-    "MUJOCO_GL": "egl",
-    "NVIDIA_VISIBLE_DEVICES": "all",
-    "NVIDIA_DRIVER_CAPABILITIES": "compute,utility,graphics"
-  },
-  "runArgs": ["--gpus=all"],
+  "name": "mobile_robot_push GPU dev",
+  "dockerComposeFile": [
+    "../compose.yaml",
+    "../compose.gpu.yaml"
+  ],
+  "service": "dev",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
   "customizations": {
     "vscode": {
       "extensions": [
