@@ -1,0 +1,19 @@
+{
+  "name": "epuck-mujoco",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "containerEnv": {
+    "MUJOCO_GL": "egl"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python"
+      ]
+    }
+  },
+  "postCreateCommand": "python -m pip install -e '.[dev]'",
+  "remoteUser": "root"
+}

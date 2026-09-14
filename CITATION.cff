@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+title: "epuck-mujoco"
+version: 0.1.0
+message: "If you use this software, please cite it using this metadata."
+authors:
+  - family-names: Hui
+    given-names: Zhihui
+license: MIT

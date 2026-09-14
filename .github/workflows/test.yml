@@ -1,0 +1,15 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build development image
+        run: docker build -t epuck-mujoco:test .
+      - name: Run tests
+        run: docker run --rm epuck-mujoco:test

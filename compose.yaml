@@ -1,0 +1,23 @@
+services:
+  test:
+    build: .
+    environment:
+      MUJOCO_GL: egl
+    command: python -m pytest -q
+
+  room:
+    build: .
+    environment:
+      MUJOCO_GL: egl
+    command: python examples/room.py
+
+  shell:
+    build: .
+    environment:
+      MUJOCO_GL: egl
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    command: bash
