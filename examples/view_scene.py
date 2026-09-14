@@ -64,6 +64,9 @@ def main() -> None:
     args = parser.parse_args()
 
     os.environ["MUJOCO_GL"] = "glfw" if args.mode == "viewer" else "egl"
+    if args.mode == "viewer" and os.environ.get("EPUCK_VIEWER_GL") == "mesa":
+        os.environ["LIBGL_ALWAYS_SOFTWARE"] = "1"
+        os.environ["__GLX_VENDOR_LIBRARY_NAME"] = "mesa"
     import mujoco
 
     spec = make_spec(args.map, args.pushers, args.parcels, args.cable)

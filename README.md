@@ -106,6 +106,7 @@ On a remote NVIDIA workstation with a virtual X desktop, start the container wit
 ```
 
 The remote X11 viewer uses its Mesa GLX provider for window presentation. Training and `--mode egl` rendering retain direct access to the NVIDIA GPU. This split avoids GLX drawable failures between virtual desktops and the NVIDIA container runtime.
+The GPU Compose environment selects this automatically, so direct `python examples/view_scene.py ...` viewer commands work as well.
 
 ## Cable attachment
 
