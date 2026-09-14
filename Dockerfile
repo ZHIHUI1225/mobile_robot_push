@@ -12,6 +12,7 @@ RUN apt-get update \
         libgl1 \
         libglfw3 \
         libosmesa6 \
+        libxv1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace

@@ -9,6 +9,19 @@ command -v nvidia-smi >/dev/null || { echo "nvidia-smi is required on the host" 
 docker info >/dev/null
 nvidia-smi --query-gpu=name,driver_version --format=csv,noheader
 
+if [[ -z "${DISPLAY:-}" ]]; then
+  x_socket="$(find /tmp/.X11-unix -maxdepth 1 -type s -user "$(id -u)" -name 'X*' -print 2>/dev/null | sort -V | tail -1)"
+  if [[ -n "$x_socket" ]]; then
+    export DISPLAY=":${x_socket##*X}"
+  fi
+fi
+
+virtualgl=false
+if [[ -x /opt/VirtualGL/bin/vglrun && -f /usr/lib/libvglfaker.so && -f /usr/lib/libdlfaker.so ]]; then
+  compose+=(-f "$repo_dir/compose.virtualgl.yaml")
+  virtualgl=true
+fi
+
 if [[ -n "${DISPLAY:-}" ]] && command -v xhost >/dev/null && xhost +local:docker >/dev/null 2>&1; then
   echo "X11 enabled: DISPLAY=$DISPLAY, socket=/tmp/.X11-unix"
 else
@@ -33,7 +46,10 @@ echo "Development container is ready: $container_id"
 echo "Host source: $repo_dir"
 echo "Container source: /workspace"
 echo "Rendering: NVIDIA GPU + EGL${DISPLAY:+ + X11 DISPLAY=$DISPLAY}"
-echo "Enter with: docker compose -f compose.yaml -f compose.gpu.yaml exec dev bash"
+if [[ "$virtualgl" == true && -n "${DISPLAY:-}" ]]; then
+  echo "Interactive viewer: ./scripts/open_viewer.sh --map single_room"
+fi
+echo "Enter with: ${compose[*]} exec dev bash"
 
 if [[ "${1:-}" == "--shell" ]]; then
   "${compose[@]}" exec dev bash
