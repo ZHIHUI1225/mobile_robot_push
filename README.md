@@ -131,4 +131,21 @@ Actions are normalized linear/angular commands `[v, omega]` and are converted to
 
 Seeded resets are deterministic. Episodes terminate when the parcel reaches the goal and truncate at the time limit. Rendering supports `rgb_array`. The single-room map is a closed rectangular room with an east doorway and exterior goal. The corridor preset preserves the research layout: an upper-left room, a lower-right room, four fixed obstacles, split-wall door openings, and the surrounding corridor.
 
+Reset sampling checks the actual MuJoCo geometry, including the rotated pushing board, and rejects placements that intersect walls, obstacles, or the other movable object. Configure a distribution when creating an environment:
+
+```python
+from epuck_mujoco import ResetConfig
+
+env = gym.make(
+    "EpuckRoomPush-v0",
+    reset_config=ResetConfig(
+        robot_spawn=(-0.62, -0.42, -0.30, 0.30),
+        parcel_spawn=(-0.15, 0.28, -0.28, 0.28),
+        obstacle_clearance=0.01,
+    ),
+)
+```
+
+Per-episode `reset(options=...)` values override that configuration. Use `robot_spawn`, `parcel_spawn`, or `robot_yaw_range` for a temporary distribution; use `robot_xy`, `parcel_xy`, and `robot_yaw` for an exact evaluation state. Unsafe exact states raise `ValueError` instead of silently moving an asset.
+
 Historical training checkpoints are not v0.1-compatible yet because observation ordering and model names have changed. Physical dimensions and actuator limits follow the research environment: 35 mm chassis radius, 20.5 mm wheel radius, 52 mm wheel track, 25 x 25 x 40 mm parcel half extents, and wheel speed limits of 6.34 rad/s.

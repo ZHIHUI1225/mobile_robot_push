@@ -5,7 +5,7 @@ gym = pytest.importorskip("gymnasium")
 mujoco = pytest.importorskip("mujoco")
 
 import epuck_mujoco
-from epuck_mujoco import Cable, EpuckPusher, SceneSpec, build_scene
+from epuck_mujoco import Cable, EpuckPusher, ResetConfig, SceneSpec, build_scene
 
 
 @pytest.mark.parametrize("map_name", ["single_room", "two_room_corridor"])
@@ -73,6 +73,69 @@ def test_presets_reset_step_and_render(env_id):
     frame = env.render()
     assert frame.shape == (256, 256, 3)
     assert frame.dtype == np.uint8
+    env.close()
+
+
+@pytest.mark.parametrize(
+    ("env_id", "robot_xy", "parcel_xy"),
+    [
+        ("EpuckRoomPush-v0", (-0.6, 0.0), (0.0, 0.0)),
+        ("EpuckCorridorPush-v0", (-1.15, -0.58), (-1.0, -0.35)),
+    ],
+)
+def test_exact_collision_safe_resets(env_id, robot_xy, parcel_xy):
+    env = gym.make(env_id)
+    observation, info = env.reset(
+        seed=12,
+        options={"robot_xy": robot_xy, "parcel_xy": parcel_xy, "robot_yaw": 0.0},
+    )
+    assert env.observation_space.contains(observation)
+    np.testing.assert_allclose(info["robot_xy"], robot_xy)
+    np.testing.assert_allclose(info["parcel_xy"], parcel_xy)
+    assert info["reset_attempts"] == 1
+    env.close()
+
+
+def test_constructor_reset_config_and_episode_override_are_deterministic():
+    config = ResetConfig(
+        robot_spawn=(-0.62, -0.55, -0.05, 0.05),
+        parcel_spawn=(-0.05, 0.10, -0.05, 0.05),
+    )
+    env = gym.make("EpuckRoomPush-v0", reset_config=config)
+    options = {"robot_yaw_range": (-0.2, 0.2), "obstacle_clearance": 0.01}
+    first, first_info = env.reset(seed=21, options=options)
+    second, second_info = env.reset(seed=21, options=options)
+    np.testing.assert_array_equal(first, second)
+    np.testing.assert_array_equal(first_info["robot_xy"], second_info["robot_xy"])
+    np.testing.assert_array_equal(first_info["parcel_xy"], second_info["parcel_xy"])
+    assert -0.2 <= first_info["robot_yaw"] <= 0.2
+    env.close()
+
+
+def test_reset_rejects_exact_state_on_wall():
+    env = gym.make("EpuckRoomPush-v0")
+    with pytest.raises(ValueError, match="not collision-safe"):
+        env.reset(
+            options={
+                "robot_xy": (-0.8, 0.0),
+                "parcel_xy": (0.0, 0.0),
+                "robot_yaw": 0.0,
+            }
+        )
+    env.close()
+
+
+def test_reset_reports_impossible_sampling_region():
+    env = gym.make(
+        "EpuckRoomPush-v0",
+        reset_config={
+            "robot_spawn": (-0.8, -0.8, 0.0, 0.0),
+            "parcel_spawn": (0.0, 0.0, 0.0, 0.0),
+            "max_attempts": 2,
+        },
+    )
+    with pytest.raises(RuntimeError, match="2 attempts"):
+        env.reset(seed=3)
     env.close()
 
 
