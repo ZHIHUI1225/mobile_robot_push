@@ -129,6 +129,6 @@ xml, manifest = build_scene(SceneSpec(
 
 Actions are normalized linear/angular commands `[v, omega]` and are converted to differential wheel speeds. Observations contain robot position and heading, planar velocity, parcel-relative position, and parcel-to-goal displacement. The reward is distance progress minus a small time cost, with a success bonus when the parcel is within the goal tolerance.
 
-Seeded resets are deterministic. Episodes terminate when the parcel reaches the goal and truncate at the time limit. Rendering supports `rgb_array`. The single-room map is a closed rectangular room with an east doorway and exterior goal. The corridor map contains two room areas joined by a central corridor.
+Seeded resets are deterministic. Episodes terminate when the parcel reaches the goal and truncate at the time limit. Rendering supports `rgb_array`. The single-room map is a closed rectangular room with an east doorway and exterior goal. The corridor preset preserves the research layout: an upper-left room, a lower-right room, four fixed obstacles, split-wall door openings, and the surrounding corridor.
 
 Historical training checkpoints are not v0.1-compatible yet because observation ordering and model names have changed. Physical dimensions and actuator limits follow the research environment: 35 mm chassis radius, 20.5 mm wheel radius, 52 mm wheel track, 25 x 25 x 40 mm parcel half extents, and wheel speed limits of 6.34 rad/s.

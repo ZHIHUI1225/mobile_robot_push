@@ -17,6 +17,29 @@ def test_map_asset_compositions_compile(map_name):
     assert manifest.parcels["parcel"]["freejoint"] == "parcel_free"
 
 
+def test_corridor_preserves_research_layout():
+    xml, _ = build_scene(SceneSpec(map="two_room_corridor"))
+    model = mujoco.MjModel.from_xml_string(xml)
+    expected = {
+        "room_right_upper": ((-0.3, 0.6, 0.1), (0.025, 0.07, 0.1)),
+        "room_right_lower": ((-0.3, 0.1, 0.1), (0.025, 0.19, 0.1)),
+        "room_bottom_left": ((-1.085, -0.1, 0.1), (0.16, 0.025, 0.1)),
+        "room_bottom_right": ((-0.515, -0.1, 0.1), (0.21, 0.025, 0.1)),
+        "room2_left_upper": ((0.2, -0.12, 0.1), (0.025, 0.29, 0.1)),
+        "room2_left_lower": ((0.2, -0.63, 0.1), (0.025, 0.04, 0.1)),
+        "room2_top_left": ((0.33, 0.2, 0.1), (0.13, 0.025, 0.1)),
+        "room2_top_right": ((0.72, 0.2, 0.1), (0.08, 0.025, 0.1)),
+        "obstacle_1": ((-0.9, 0.35, 0.1), (0.06, 0.06, 0.1)),
+        "obstacle_2": ((-0.55, 0.1, 0.1), (0.06, 0.06, 0.1)),
+        "obstacle_3": ((0.4, -0.05, 0.1), (0.06, 0.06, 0.1)),
+        "obstacle_4": ((0.6, -0.5, 0.1), (0.06, 0.06, 0.1)),
+    }
+    for name, (position, size) in expected.items():
+        geom_id = model.geom(name).id
+        np.testing.assert_allclose(model.geom_pos[geom_id], position)
+        np.testing.assert_allclose(model.geom_size[geom_id], size)
+
+
 def test_cable_attaches_two_pushers_and_simulates():
     left = EpuckPusher("left", pos=(-0.175, 0.0, 0.022))
     right = EpuckPusher("right", pos=(0.175, 0.0, 0.022))

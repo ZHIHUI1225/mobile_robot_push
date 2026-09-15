@@ -21,22 +21,24 @@ def make_spec(map_name: str, pusher_count: int, parcel_count: int, cable: bool) 
     if cable and pusher_count != 2:
         raise ValueError("--cable requires --pushers 2")
 
-    center_x = -0.30 if map_name == "single_room" else 0.0
+    center_x = -0.30 if map_name == "single_room" else 1.025
+    pusher_y = 0.0 if map_name == "single_room" else -0.60
     if pusher_count == 1:
         pusher_x = (center_x,)
     else:
         # The default cable has 14 links x 0.025 m = 0.35 m.
         pusher_x = (center_x - 0.175, center_x + 0.175)
     pushers = tuple(
-        EpuckPusher(f"robot_{index}", pos=(x, 0.0, 0.022))
+        EpuckPusher(f"robot_{index}", pos=(x, pusher_y, 0.022))
         for index, x in enumerate(pusher_x)
     )
 
-    parcel_origin = 0.20 if map_name == "single_room" else 0.75
+    parcel_origin = 0.20 if map_name == "single_room" else 0.96
+    parcel_y = 0.10 if map_name == "single_room" else -0.35
     parcels = tuple(
         BoxParcel(
             f"parcel_{index}",
-            pos=(parcel_origin + 0.10 * (index // 2), 0.10 * (-1 if index % 2 else 1), 0.04),
+            pos=(parcel_origin + 0.10 * (index // 2), parcel_y + 0.10 * (index % 2), 0.04),
         )
         for index in range(parcel_count)
     )
