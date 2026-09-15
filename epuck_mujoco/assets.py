@@ -19,16 +19,11 @@ class EpuckPusher:
     max_wheel_speed: float = 6.34
     attachment_offset: tuple[float, float, float] = (0.0, 0.0, 0.0335)
 
-    def xml(self) -> str:
+    def xml(self, include_push_board: bool = True) -> str:
         name = self.name
         x, y, z = self.pos
         ax, ay, az = self.attachment_offset
-        return f"""
-<body name="{name}" pos="{x} {y} {z}" euler="0 0 {self.yaw}">
-  <freejoint name="{name}_free"/>
-  <inertial pos="0 0 -0.01" mass="0.15" diaginertia="0.00009 0.00009 0.00014"/>
-  <geom name="{name}_chassis" type="cylinder" size="0.035 0.025" pos="0 0 0.005"
-        material="epuck" mass="0.15" condim="3" friction="1.2 0.1 0.001"/>
+        board_xml = f"""
   <body name="{name}_board" pos="0.035 0 0.0025">
     <geom name="{name}_board_front" type="box" size="0.003 0.035 0.0215"
           material="board" mass="0.01" condim="3" friction="1.8 0.2 0.001"/>
@@ -37,6 +32,14 @@ class EpuckPusher:
     <geom name="{name}_board_right" type="box" size="0.01 0.0015 0.0215"
           pos="0.013 -0.0365 0" material="board" mass="0.002"/>
   </body>
+""" if include_push_board else ""
+        return f"""
+<body name="{name}" pos="{x} {y} {z}" euler="0 0 {self.yaw}">
+  <freejoint name="{name}_free"/>
+  <inertial pos="0 0 -0.01" mass="0.15" diaginertia="0.00009 0.00009 0.00014"/>
+  <geom name="{name}_chassis" type="cylinder" size="0.035 0.025" pos="0 0 0.005"
+        material="epuck" mass="0.15" condim="3" friction="1.2 0.1 0.001"/>
+  {board_xml}
   <site name="{name}_attach" pos="{ax} {ay} {az}" size="0.004" rgba="0.2 0.8 1 1"/>
   <body name="{name}_wheel_left" pos="0 0.026 0">
     <joint name="{name}_wheel_left_joint" type="hinge" axis="0 1 0" damping="0.001" armature="0.0001"/>

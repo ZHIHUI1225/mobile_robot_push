@@ -53,6 +53,7 @@ def build_scene(spec: SceneSpec) -> tuple[str, SceneManifest]:
     cable_xml = ""
     equality_xml = ""
     cable_manifest = None
+    cable_pusher_names: set[str] = set()
     if spec.cable is not None:
         if spec.cable_sites is None or len(set(spec.cable_sites)) != 2:
             raise ValueError("Cable requires two distinct pusher attachment sites")
@@ -60,6 +61,7 @@ def build_scene(spec: SceneSpec) -> tuple[str, SceneManifest]:
         if any(site not in pushers_by_site for site in spec.cable_sites):
             raise ValueError("Cable endpoints must reference existing pusher attachment sites")
         first, second = (pushers_by_site[site] for site in spec.cable_sites)
+        cable_pusher_names = {first.name, second.name}
         cable_xml, equality_xml, cable_joints = spec.cable.xml(
             first.name,
             second.name,
@@ -101,7 +103,7 @@ def build_scene(spec: SceneSpec) -> tuple[str, SceneManifest]:
   <worldbody>
     <light pos="0 0 3" dir="0 0 -1" directional="true"/>
     {map_spec['xml']}
-    {''.join(pusher.xml() for pusher in spec.pushers)}
+    {''.join(pusher.xml(include_push_board=pusher.name not in cable_pusher_names) for pusher in spec.pushers)}
     {''.join(parcel.xml() for parcel in spec.parcels)}
     {cable_xml}
   </worldbody>
@@ -120,7 +122,9 @@ def build_scene(spec: SceneSpec) -> tuple[str, SceneManifest]:
                     f"{pusher.name}_wheel_right_velocity",
                 ),
                 "attach_site": f"{pusher.name}_attach",
-                "collision_geoms": (
+                "collision_geoms": (f"{pusher.name}_chassis",)
+                if pusher.name in cable_pusher_names
+                else (
                     f"{pusher.name}_chassis",
                     f"{pusher.name}_board_front",
                     f"{pusher.name}_board_left",

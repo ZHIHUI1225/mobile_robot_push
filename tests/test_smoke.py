@@ -51,6 +51,9 @@ def test_cable_attaches_two_pushers_and_simulates():
     assert np.isfinite(data.qpos).all()
     assert manifest.cable["pusher_sites"] == ("left_attach", "right_attach")
     assert model.neq == 2
+    assert mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, "left_board_front") == -1
+    assert mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_GEOM, "right_board_front") == -1
+    assert manifest.pushers["left"]["collision_geoms"] == ("left_chassis",)
 
 
 @pytest.mark.parametrize("env_id", ["EpuckRoomPush-v0", "EpuckCorridorPush-v0"])
