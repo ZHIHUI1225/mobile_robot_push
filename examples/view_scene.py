@@ -21,7 +21,7 @@ def make_spec(map_name: str, pusher_count: int, parcel_count: int, cable: bool) 
     if cable and pusher_count != 2:
         raise ValueError("--cable requires --pushers 2")
 
-    center_x = -0.30 if map_name == "single_room" else 1.025
+    center_x = -0.30 if map_name == "single_room" else -1.025
     pusher_y = 0.0 if map_name == "single_room" else -0.60
     if pusher_count == 1:
         pusher_x = (center_x,)
@@ -33,7 +33,7 @@ def make_spec(map_name: str, pusher_count: int, parcel_count: int, cable: bool) 
         for index, x in enumerate(pusher_x)
     )
 
-    parcel_origin = 0.20 if map_name == "single_room" else 0.96
+    parcel_origin = 0.20 if map_name == "single_room" else -1.10
     parcel_y = 0.10 if map_name == "single_room" else -0.35
     parcels = tuple(
         BoxParcel(

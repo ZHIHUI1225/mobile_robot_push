@@ -18,8 +18,8 @@ MAPS = {
     },
     "two_room_corridor": {
         "goal": (1.20, -0.30),
-        "robot_spawn": (0.90, 1.18, -0.64, -0.52),
-        "parcel_spawn": (0.92, 1.15, -0.46, -0.26),
+        "robot_spawn": (-1.20, -0.92, -0.64, -0.52),
+        "parcel_spawn": (-1.12, -0.88, -0.43, -0.25),
         "camera": (0.0, 0.0, 3.1),
         "xml": """
 <geom name="floor" type="plane" size="1.5 1.0 0.1" material="floor" condim="3" friction="0.8 0.005 0.0001" contype="5" conaffinity="11"/>
